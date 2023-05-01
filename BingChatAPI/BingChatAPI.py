@@ -2,7 +2,6 @@ import json
 import time
 import asyncio
 from websockets.client import connect
-from dotenv.main import load_dotenv
 import sys
 import os
 import requests
@@ -10,10 +9,6 @@ import logging
 
 
 logging.basicConfig(stream=sys.stdout, level=logging.ERROR)
-
-load_dotenv()
-cookie = os.environ['U_COOKIE']
-logging.info(f"UserCookie: {cookie}")
 
 DELIMITER = "\x1e"
 CONVERSATION_URL = "https://www.bing.com/turing/conversation/create"
@@ -30,7 +25,7 @@ class BingChatAPI:
         }
         self.connection = None
 
-    def initialConnection(self) -> None:
+    def initialConnection(self, cookie: str) -> None:
         cookies = {"_U": cookie}
         headers = {
             'User-Agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36 Edg/112.0.1722.64"

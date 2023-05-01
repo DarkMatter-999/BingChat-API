@@ -2,10 +2,16 @@
 
 import asyncio
 import aioconsole
-from BingChatAPI import BingChatAPI
+from BingChatAPI.BingChatAPI import BingChatAPI
+import os
+from dotenv.main import load_dotenv
+
+load_dotenv()
+cookie = os.environ['U_COOKIE']
+print(f"UserCookie: {cookie}")
 
 API = BingChatAPI()
-API.initialConnection()
+API.initialConnection(cookie)
 
 
 async def callChat():
