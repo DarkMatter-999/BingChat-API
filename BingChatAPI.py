@@ -9,7 +9,7 @@ import requests
 import logging
 
 
-logging.basicConfig(stream=sys.stdout, level=logging.INFO)
+logging.basicConfig(stream=sys.stdout, level=logging.ERROR)
 
 load_dotenv()
 cookie = os.environ['U_COOKIE']
@@ -147,21 +147,26 @@ class BingChatAPI:
 
             await self.connection.send(json.dumps(text_struct) + DELIMITER)
 
+            output = []
             finalresponse = False
             while not finalresponse:
                 message = str(await self.connection.recv()).split(DELIMITER)[0]
                 message = json.loads(message)
 
+                logging.info(message)
+
                 if message["type"] == 2:
                     finalresponse = True
                     self.res["invocationId"] += 1
-                    return message["item"]["messages"][1]["text"]
-                elif message["type"] == 6:
-                    logging.info("Done Answering")
-                elif "messages" in message["arguments"][0].keys():
-                    if "text" in message["arguments"][0]["messages"][0].keys():
-                        logging.info(message["arguments"]
-                                     [0]["messages"][0]["text"])
+                    for text in message["item"]["messages"]:
+                        if "text" in text.keys():
+                            output.append(text["text"])
+                # elif "messages" in message["arguments"][0].keys():
+                #     if "text" in message["arguments"][0]["messages"][0].keys():
+                #         logging.info(message["arguments"]
+                #                      [0]["messages"][0]["text"])
+
+            return output
 
     async def close(self) -> None:
         if self.connection:

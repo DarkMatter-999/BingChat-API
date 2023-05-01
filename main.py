@@ -11,7 +11,7 @@ API.initialConnection()
 async def callChat():
     await API.wsConnect()
 
-    print(await API.update("What is 1 + 1 answer me without searching on the internet"))
+    print(await API.update("What is 1 + 1"))
 
     print(await API.update("ok then what is 1 + 10"))
 
