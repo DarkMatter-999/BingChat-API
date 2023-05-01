@@ -144,29 +144,32 @@ class BingChatAPI:
                 "target": "chat",
                 "type": 4,
             }
+            try:
+                await self.connection.send(json.dumps(text_struct) + DELIMITER)
 
-            await self.connection.send(json.dumps(text_struct) + DELIMITER)
+                output = []
+                finalresponse = False
+                while not finalresponse:
+                    message = str(await self.connection.recv()).split(DELIMITER)[0]
+                    message = json.loads(message)
 
-            output = []
-            finalresponse = False
-            while not finalresponse:
-                message = str(await self.connection.recv()).split(DELIMITER)[0]
-                message = json.loads(message)
+                    logging.info(message)
 
-                logging.info(message)
+                    if message["type"] == 2:
+                        finalresponse = True
+                        self.res["invocationId"] += 1
+                        for text in message["item"]["messages"][1:]:
+                            if "text" in text.keys():
+                                output.append({text["author"]: text["text"]})
+                    # elif "messages" in message["arguments"][0].keys():
+                    #     if "text" in message["arguments"][0]["messages"][0].keys():
+                    #         logging.info(message["arguments"]
+                    #                      [0]["messages"][0]["text"])
 
-                if message["type"] == 2:
-                    finalresponse = True
-                    self.res["invocationId"] += 1
-                    for text in message["item"]["messages"]:
-                        if "text" in text.keys():
-                            output.append(text["text"])
-                # elif "messages" in message["arguments"][0].keys():
-                #     if "text" in message["arguments"][0]["messages"][0].keys():
-                #         logging.info(message["arguments"]
-                #                      [0]["messages"][0]["text"])
-
-            return output
+                return output
+            except Exception as e:
+                logging.error(e)
+                return None
 
     async def close(self) -> None:
         if self.connection:
