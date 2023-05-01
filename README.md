@@ -2,6 +2,8 @@
 
 This project provides an API for BingChat. The API allows users to access BingChat from Python.
 
+![Chat Image](assets/chat.gif)
+
 ## Getting Started
 
 ### Prerequisites
